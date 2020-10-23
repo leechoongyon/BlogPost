@@ -5,8 +5,6 @@ categories: [jpa]
 tags: [jpa]     # TAG names should always be lowercase
 ---
 
-> * 이 문서는 '자바 ORM 표준 JPA 프로그래밍' 책을 읽고 정리한 것입니다.
-
 
 ## Jpa 란? 
 - Java Persistence API 
@@ -18,19 +16,30 @@ tags: [jpa]     # TAG names should always be lowercase
 - Object Releational Mapping
 - 객체와 관계형 데이터베이스를 맵핑
 - 패러다임의 불일치 문제 및 SQL 생성을 해줌.
-
+    - Object 와 RDB 를 맵핑해줌으로써 기존의 DB 접근 방식에 대한 개선
 
 ## Jpa 의 편리함
-- 먼저 한 예시를 보겠다. JDBC 를 이용해서 insert, update 를 한다고 가정하자.
-- update, insert 를 개발했는데 update, insert 에 컬럼을 추가하는  요구사항이 발생했다. 그럼 update, insert 에 사용되는 객체에 컬럼을 추가하고, update, insert 에 사용되는 쿼리에 컬럼을 추가해줘야 한다.
-- Jpa 는 이러한 것을 Entity 만 수정해주고 저장하면 나머지를 알아서 해준다.
+- 코드 간결성
+    - 먼저 한 예시를 보겠다. JDBC 를 이용해서 insert, update 를 한다고 가정하자.
+    - update, insert 를 개발했는데 update, insert 에 컬럼을 추가하는  요구사항이 발생했다. 그럼 update, insert 에 사용되는 객체에 컬럼을 추가하고, update, insert 에 사용되는 쿼리에 컬럼을 추가해줘야 한다.
+    - Jpa 는 이러한 것을 Entity 만 수정해주고 저장하면 나머지를 알아서 해준다.
+- 코드 명확함
+    - SQL 을 보는 것보다 코드만 보고 어떻게 동작할지 쉽게 짐작이 감.
 
+## Jpa 단점
+- learning cost 높음.
+- 구조를 모르면 내가 예상치 못하게 동작함.
 
 ## 왜 Jpa 를 사용하는가?
 - 반복되는 작업을 줄여줌.
 - 운영 및 추가 개발 (유지보수)
 - 패러다임 불일치 해결 = 즉, 반복되는 작업 줄여 줌.
+    - 상속
+    - 비교
+    - 연관관계
+    - 그래프 탐색
 - 성능 (JDBC 와 프로그램 간 중간에 JPA 가 위치하고 있기에 이 이점을 이용해 성능 개선 가능)
+    - Context 영역
 - 데이터 접근 추상화 및 독립성
 
 ## Jpa 와 MyBatis 비교
@@ -70,7 +79,28 @@ jpa.persist(parent);
 - 반면 RDB 테이블은 외래키를 사용해서 테이블 간 연관관계를 맺는다.
 - 이러한 패러다임 불일치로 인해 발생되는 문제점은 다음과 같다.
 
-{% gist leechoongyon/32c4684d140375e6d1fb598b083326d8 %}
+
+```java
+public class Parent {
+    Child child;
+  
+    public Child getChild() {
+      return child;
+    }
+}
+
+
+// 위와 같을 때, Parent 를 가지고 저장할려면, Child 의 key 를 가져와야 한다.
+// 가져온 Child key 를 가지고, 테이블에 저장을 해야할테고.
+parent.getChild().getId();
+insert (parent xxx);
+insert (child xxx);
+
+// Jpa 에서는 다음과 같이 처리한다.
+// 자동으로 연관관계를 맺어 처리해준다.
+parent.setChild(child);
+jpa.persist(parent);
+```
 
 
 #### 3. 객체 그래프 탐색
