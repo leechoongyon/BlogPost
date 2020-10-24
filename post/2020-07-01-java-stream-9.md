@@ -13,4 +13,38 @@ tags: [java]     # TAG names should always be lowercase
 - 구하고자 하는 것은 Map 안의 value 중에서 val1 로 시작하는 value 를 구하는 것이다.
 - flatMap 은 map 과는 다르게 단일원소 스트림으로 변환시켜주는 메소드.
 
-{% gist leechoongyon/d314f8c9c1550f5e6a89cb78d484c89d %}
+
+```java
+public class LambdaTest {  
+    public static void main(String[] args) {  
+        Map<String, String> map = new HashMap<>();  
+        map.put("val", "val1");  
+  
+        Map<String, String> map1 = new HashMap<>();  
+        map1.put("val", "val11");  
+  
+        Map<String, String> map2 = new HashMap<>();  
+        map2.put("val", "val111");  
+  
+        List<Map<String, String>> list = new ArrayList<>();  
+        list.add(map);  
+        list.add(map1);  
+        list.add(map2);  
+  
+        List<A> listA = new ArrayList<>();  
+        A a = new A();  
+        a.setList(list);  
+        listA.add(a);  
+  
+        Map result = listA.stream().map(i -> i.getList())
+                    .flatMap(List::stream)
+                    .filter(i -> i.get("val").equals("val1")).findAny().get();  
+        log.debug("result : {}", result);  
+  }  
+    
+  public static class A {  
+        @Getter
+        private List<Map<String, String>> list;
+  }  
+}
+```
