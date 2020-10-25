@@ -22,4 +22,29 @@ tags: [coding]     # TAG names should always be lowercase
 - 숫자가 커져도 처리 가능
 
 ###### source
-{% gist leechoongyon/abe7d9384082e6a7d65d82f2063d5d7e %}
+```java
+public class FactorialTest {
+    public static void main(String[] args) {
+        BigInteger bigInteger = new BigInteger("100000");
+        System.out.println(factorialForLoop(bigInteger));
+        System.out.println(factorialRecursion(bigInteger));
+    }
+
+    public static BigInteger factorialRecursion(BigInteger n) {
+        if (n.equals(BigInteger.ONE)) {
+            return BigInteger.ONE;
+        }
+        return n.multiply(factorialRecursion(n.subtract(BigInteger.ONE)));
+    }
+
+    public static BigInteger factorialForLoop(BigInteger n) {
+        BigInteger tmp = n;
+        BigInteger result = BigInteger.ONE;
+        while ( !tmp.equals(BigInteger.ZERO)) {
+            result = result.multiply(tmp);
+            tmp = tmp.subtract(BigInteger.ONE);
+        }
+        return result;
+    }
+}
+```
