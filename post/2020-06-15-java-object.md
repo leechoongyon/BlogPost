@@ -17,9 +17,11 @@ tags: [java]     # TAG names should always be lowercase
 2. equals
 - 두 객체의 내용이 같은지 확인
 - equals 를 재정의하면 hashcode 도 재정의 하는 것이 좋음.
+- equals 의 기본 동작은 주소를 비교하는 것이며, override 해야 값 비교가 가능.
 
 3. hashcode
 - 두 객체가 같은 객체인지 확인
+- collection 에서 hashcode 를 사용해 값을 가져오거나 넣는다. 
 
 4. clone
 - 복제
