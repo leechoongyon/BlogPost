@@ -14,7 +14,7 @@ tags: [til]     # TAG names should always be lowercase
 - Spring 에서 @Async annotation 을 설정해두면 호출하는 스레드는 즉시 리턴하고, Spring 스레드 풀에서에서 Thread 처리를 수행합니다.
 - @Async 라고 선언된 annotation 이 spring aop 에 의해서 감지되서 수행 됩니다.
 
-## spring Async 활용 source
+## spring Async 샘플 source
 #### AsyncConfig
 - AsyncConfig 를 통해 Spring 에서 Async 설정을 어떻게 할지 알려줍니다.
 - AsyncConfig 에 @EnableAsync 를 선언함으로써 관련 설정을 수행합니다.
@@ -115,12 +115,12 @@ public class AsyncTestService {
 - sync 는 5초 후에 결과를 반환할테고, async 는 즉시 반환합니다.
 
 ## ThreadPoolExecutor 와 spring 과의 관계 정리
-- @Async 라고 선언돼있는 것을 aop 가 찾아내서 해당 클래스의 메소드를 실행시킨다.
-- method 의 return 타입에 따라 분기 처리를 하게돼있다.
-- 분기 처리를 하는 이유는 method 의 return type 용도에 따라서 처리가 달라지게 때문이다. 
-- AsyncTaskExecutor 는 최종적으로 java.util.concurrent.Executor 를 extends 하게 돼있다.
-    - Executor 가 하는 역할은 스레드를 관리하는 interface 이다. (유휴 상태 관리, 스레드 생성 제어 등)
-- 다시 정리하면 @Async 를 호출하면 내부 스레드 풀을 호출하여 해당 스레드 풀이 스레드들을 처리하는 구조이다. 
+- @Async 라고 선언돼있는 것을 aop 가 찾아내서 해당 클래스의 메소드를 실행시킵니다.
+- method 의 return 타입에 따라 분기 처리를 하게돼있습니다.
+- 분기 처리를 하는 이유는 method 의 return type 용도에 따라서 처리가 달라지게 때문입니다. 
+- AsyncTaskExecutor 는 최종적으로 java.util.concurrent.Executor 를 extends 하게 돼있습니다.
+    - Executor 가 하는 역할은 스레드를 관리하는 interface 입니다. (유휴 상태 관리, 스레드 생성 제어 등)
+- 다시 정리하면 @Async 를 호출하면 내부 스레드 풀을 호출하여 해당 스레드 풀이 스레드들을 처리하는 구조입니다. 
 
 ```java
 
