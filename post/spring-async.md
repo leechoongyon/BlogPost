@@ -10,7 +10,7 @@ tags: [til]     # TAG names should always be lowercase
 
 ## Spring Async 처리
 - sync 란 호출 후 응답을 기다리는거고, async 는 호출 후 응답을 기다리지 않는 것입니다.
-    - 이러한 특징 떄문에 Async 의 경우 응답이 오래 걸리는 작업을 호출해놓고 따른 작업을 하거나 response 를 반환해줍니다.
+    - 이러한 특징 떄문에 Async 의 경우 오래 걸리는 작업을 호출한 후, 응답을 즉시 반환할 수 있습니다.   
 - Spring 에서 @Async annotation 을 설정해두면 호출하는 스레드는 즉시 리턴하고, Spring TaskExecutor 에서 Thread 처리를 수행합니다.
 - @Async 라고 선언된 annotation 이 spring aop 에 의해서 감지되서 수행 됩니다.
 
