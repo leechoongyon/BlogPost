@@ -10,6 +10,7 @@ tags: [til]     # TAG names should always be lowercase
 
 ## Spring Async 처리
 - sync 란 호출 후 응답을 기다리는거고, async 는 호출 후 응답을 기다리지 않는 것입니다.
+    - 이러한 특징 떄문에 Async 의 경우 응답이 오래 걸리는 작업을 호출해놓고 따른 작업을 하거나 response 를 반환해줍니다.
 - Spring 에서 @Async annotation 을 설정해두면 호출하는 스레드는 즉시 리턴하고, Spring TaskExecutor 에서 Thread 처리를 수행합니다.
 - @Async 라고 선언된 annotation 이 spring aop 에 의해서 감지되서 수행 됩니다.
 
@@ -114,8 +115,42 @@ public class AsyncTestService {
 - sync 는 5초 후에 결과를 반환할테고, async 는 즉시 반환합니다.
 
 ## ThreadPoolExecutor 와 spring 과의 관계 정리
-- 아래 reference 읽어보면 나옴.
-- 어떻게 spring 이 ThreadPoolExecutor 를 만들어서 저장하고, 실행하는지. aop 관련
+- @Async 라고 선언돼있는 것을 aop 가 찾아내서 해당 클래스의 메소드를 실행시킨다.
+- method 의 return 타입에 따라 분기 처리를 하게돼있다.
+- 분기 처리를 하는 이유는 method 의 return type 용도에 따라서 처리가 달라지게 때문이다. 
+- AsyncTaskExecutor 는 최종적으로 java.util.concurrent.Executor 를 extends 하게 돼있다.
+    - Executor 가 하는 역할은 스레드를 관리하는 interface 이다. (유휴 상태 관리, 스레드 생성 제어 등)
+- 다시 정리하면 @Async 를 호출하면 내부 스레드 풀을 호출하여 해당 스레드 풀이 스레드들을 처리하는 구조이다. 
+
+```java
+
+AsyncExecutionAspectSupport.class
+
+@Nullable
+protected Object doSubmit(Callable<Object> task, AsyncTaskExecutor executor, Class<?> returnType) {
+	if (CompletableFuture.class.isAssignableFrom(returnType)) {
+		return CompletableFuture.supplyAsync(() -> {
+			try {
+				return task.call();
+			}
+			catch (Throwable ex) {
+				throw new CompletionException(ex);
+			}
+		}, executor);
+	}
+	else if (ListenableFuture.class.isAssignableFrom(returnType)) {
+		return ((AsyncListenableTaskExecutor) executor).submitListenable(task);
+	}
+	else if (Future.class.isAssignableFrom(returnType)) {
+		return executor.submit(task);
+	}
+	else {
+		executor.submit(task);
+		return null;
+	}
+}
+```
+
 
 ## spring async 를 어떠한 경우에 사용하면 좋은가?
 - api 연동을 하는데 해당 api 가 시간이 오래 걸릴경우 사용하면 좋다.
