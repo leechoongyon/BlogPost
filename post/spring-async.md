@@ -19,9 +19,11 @@ tags: [til]     # TAG names should always be lowercase
 - AsyncConfig 를 통해 Spring 에서 Async 설정을 어떻게 할지 알려줍니다.
 - AsyncConfig 에 @EnableAsync 를 선언함으로써 관련 설정을 수행합니다.
 - getAsyncExecutor 에 Bean 명을 선언한 이유는 또 다른 AsyncExecutor 를 만들수도 있을 것 같아서 설정했습니다.
-
+- AsyncConfigurer 를 implement 하거나 아니면 Bean 으로 설정해서 하거나 맞는 방식으로 쓰면 된다. 둘다 사용 가능.
+    - @Async("Bean명") 을 선언하면 된다.
+    
 ```java
-
+// AsyncConfiguerer 를 implement 해서 사용
 @Configuration
 @EnableAsync
 public class AsyncConfig implements AsyncConfigurer {
@@ -39,6 +41,35 @@ public class AsyncConfig implements AsyncConfigurer {
     }
 }
 
+
+// AsyncConfiguerer 를 사용 X
+@Configuration
+@EnableAsync
+public class AsyncConfig {
+
+    @Bean(name = "asyncTestExecutor1")
+    public Executor getAsyncExecutor1() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);     
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(10);
+        executor.setBeanName("asyncTestExecutor1");
+        executor.initialize();
+        return executor;
+    }
+    
+    @Bean(name = "asyncTestExecutor2")
+    public Executor getAsyncExecutor2() {
+        ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
+        executor.setCorePoolSize(2);     
+        executor.setMaxPoolSize(5);
+        executor.setQueueCapacity(10);
+        executor.setBeanName("asyncTestExecutor2");
+        executor.initialize();
+        return executor;
+    }
+
+}
 
 ```
 
@@ -156,6 +187,7 @@ protected Object doSubmit(Callable<Object> task, AsyncTaskExecutor executor, Cla
 - api 연동을 하는데 해당 api 가 시간이 오래 걸릴경우 사용하면 좋다.
     - 단 api 연동을 통해 받은 response 값이 필요없을 경우이다.
     - 필요하다면 sync 처리를 하거나 다른 방안을 강구해야 한다.
+
 
 ## Reference
 - https://pakss328.medium.com/spring-async-annotation%EC%9D%84-%ED%99%9C%EC%9A%A9%ED%95%9C-thread-%EA%B5%AC%ED%98%84-f5b4766d49c5
