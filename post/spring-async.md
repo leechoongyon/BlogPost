@@ -19,8 +19,8 @@ tags: [til]     # TAG names should always be lowercase
 - AsyncConfig 를 통해 Spring 에서 Async 설정을 어떻게 할지 알려줍니다.
 - AsyncConfig 에 @EnableAsync 를 선언함으로써 관련 설정을 수행합니다.
 - getAsyncExecutor 에 Bean 명을 선언한 이유는 또 다른 AsyncExecutor 를 만들수도 있을 것 같아서 설정했습니다.
-- AsyncConfigurer 를 implement 하거나 아니면 Bean 으로 설정해서 하거나 맞는 방식으로 쓰면 된다. 둘다 사용 가능.
-    - @Async("Bean명") 을 선언하면 된다.
+- AsyncConfigurer 를 implement 하거나 아니면 Bean 으로 설정해서 하거나 맞는 방식으로 쓰면 됩니다. 둘다 사용 가능합니다.
+    - @Async("Bean명") 을 선언하면 됩니다.
     
 ```java
 // AsyncConfiguerer 를 implement 해서 사용
