@@ -19,8 +19,21 @@ tags: [til]     # TAG names should always be lowercase
 
 #### Case 별 ThreadPoolExecutor 동작
 
-###### case1. 요청 스레드가 corePoolSize
-- 
+###### case1. 요청 스레드가 10개, corePoolSize 1개, WorkQueue 10개, maximumPoolSize : 5
+- 초기에 corePoolSize 만큼 스레드가 생성되고 1개 스레드를 처리.
+- 9개 요청은 큐에 담겨져 있어서. 요청을 처리할 때마다 큐에서 1개씩 빼서 처리.
+
+###### case2. 요청 스레드가 10개, corePoolSize 1개, workQueue 5개, maximumPoolSize : 5개
+- 초기에 corePoolSize 만큼 스레드가 생성되고 1개 스레드를 처리.
+- 큐에 5개 쌓이고, 요청 스레드가 4개 남음.
+- ThreadPool 이 maximumPoolSize (5개) 만큼 스레드를 생성해 나머지 요청 스레드를 처리함.
+- 요청 스레드를 처리하고, ThreadPool 은 일정시간이 흐른 후, corePoolSize 를 유지.
+ 
+###### case3. 요청 스레드가 10개, corePoolSize 1개, workQueue 5개, maximumPoolSize : 2개
+- 초기에 corePoolSize 만큼 스레드가 생성되고 1개 스레드를 처리.
+- 큐에 5개가 쌓이고, 요청 스레드가 4개 남음. 
+- ThreadPool 에서 thread 를 maximumPoolSize (2개) 까지 늘림. 
+- 그래도 요청 스레드가 3개 남음. 요청 스레드를 처리할 스레드가 없다고 에러 남. 
  
 
 ## reference
