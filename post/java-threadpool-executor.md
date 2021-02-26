@@ -34,7 +34,16 @@ tags: [til]     # TAG names should always be lowercase
 - 큐에 5개가 쌓이고, 요청 스레드가 4개 남음. 
 - ThreadPool 에서 thread 를 maximumPoolSize (2개) 까지 늘림. 
 - 그래도 요청 스레드가 3개 남음. 요청 스레드를 처리할 스레드가 없다고 에러 남. 
- 
+
+#### ThreadPool 과 OS core 관계
+- 좀 다른 주제일 수 있지만 생각나는 김에 적어 봤음.
+- 하나의 JVM 은 하나의 프로세스에서 동작한다. 하나의 프로세스 안에는 여러개의 스레드가 동작한다.
+- 수십개의 요청이 들어와서 ThreadPool 에서 스레드를 하나씩 꺼내서 처리한다고 가정해보자.
+- 이 때, 이 스레드들은 하나의 core 에서 동작할까? 정답은 멀티 core 에서 동작한다는 것이다.
+- 하나의 JVM 은 하나의 프로세스에서 동작한다면, 하나의 core 에서만 스레드가 동작할 것이라 생각되지만.
+- 요즘 OS 시스템은 스레드 단위로 스케줄링을 처리할 수 있다.
+- 즉, JVM 내에서 스레드를 할당해 요청을 처리해도 OS System 에서 여러 core 에 스케줄링해서 멀티 core 로 처리할 수 있다.    
 
 ## reference
 - http://wonwoo.ml/index.php/post/2254
+- https://insanelysimple.tistory.com/226
