@@ -7,10 +7,10 @@ tags: [til]     # TAG names should always be lowercase
  
  
 ## [Spring] ResponseEntity 란?
-- Spring 에서 HttpRequest 에 대해 제공하는 클래스
 - HttpBody, HttpHeader, HttpStatus 을 담고 있음.
+- 해당 데이터들을 response 로 넘겨줄 수 있음.
 
-- getMember 를 호출하면 member 데이터 (JSON) 와 HttpStatus.OK (200) 을 클라이언트에서 받게 됨.
+- 아래 소스를 보면, getMember 를 호출하면 member 데이터 (JSON) 와 HttpStatus.OK (200) 을 클라이언트에서 받게 됨.
 
 ```java
 
