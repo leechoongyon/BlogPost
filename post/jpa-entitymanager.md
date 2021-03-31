@@ -12,9 +12,16 @@ tags: [til]     # TAG names should always be lowercase
 ## EntityManager
 - 엔티티를 관리하는 역할을 한다.
 - 엔티티 매니저 내부에는 영속성 컨텍스트가 있으며, 이를 통해 엔티티 관리.
-    - 잠깐 영속성 컨텍스트의 개념을 짚고 넘어가면 엔티티를 영구히 저장하는 공간
 - 여러 엔티티 매니저가 하나의 영속성 컨텍스트를 공유 가능
 - EntityManager 는 Thread-Safe 를 보장해야 한다. 동일한 EntityManager 를 가지고 멀티 스레드 환경에서 호출한다면 데이터가 어떻게 변경될지 모름.
+
+## 영속성 컨텍스트, dirty checking
+- 잠깐 영속성 컨텍스트의 개념을 짚고 넘어가면 엔티티를 영구히 저장하는 공간
+- 영속성 컨텍스트는 관리하고 있는 엔티티의 변화를 추적하고, 한 트랜잭션 내에서 변화가 일어나면 엔티티에 마킹한다. 그리고 트랜잭션이 끝나는 시점에 마킹한 것을 DB 에 반영해준다. 
+    - 이를 dirty checking 이라 한다.
+- 이렇게 dirty checking 을 함으로써 여러 이점이 있겠지만 영속성 컨텍스트가 중간에서 쿼리들을 모았다가 한 번에 반영해주니 리소스 감소가 있음.
+    - 이를 쓰기 지연이라 함.
+- 단, 영속성 컨텍스트 에서 관리 하지 않는 Entity 일 경우 위 동작을 안하겠지
 
 ## Spring 환경 에서 EntityManager 는 Thread-Safe 한가?
 - 아래 블로그 내용 결론만 정리하면 Spring 에서는 EntityManager 를 Proxy 를 통해 감싸며, EntityManager 메소드를 호출할 때마다 Proxy 를 통해 EntityManager 를 생성한다. 즉, Thread-Safe 하다.
@@ -64,6 +71,8 @@ tags: [til]     # TAG names should always be lowercase
 		}
 ```
 
+## EntityManagerFactory
+- EntityManager 를 만드는 것이며, 스레드 간에 공유가 안되게 돼있음. 싱글톤 방식임.
 
 ## Reference
 
