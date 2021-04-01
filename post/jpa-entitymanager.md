@@ -23,6 +23,50 @@ tags: [til]     # TAG names should always be lowercase
     - 이를 쓰기 지연이라 함.
 - 단, 영속성 컨텍스트 에서 관리 하지 않는 Entity 일 경우 위 동작을 안하겠지
 
+## Spring 환경에서 동일 Transaction 에서의 EntityManager 와 다른 Transaction 에서의 EntityManager
+- 동일 Transaction 에서 EntityManager 를 여러 번 호출해서 처리하면 같은 영속성 컨텍스트 에서 처리된다.
+- 다른 Transaction 이라면 다른 영속성 컨텍스트에서 처리된다.
+- 아래 예시를 보면 쉽게 알 수 있음. test 메소드를 보면 처음 findAll 을 한 뒤에, member 를 한 번 저장하고, 다시 findAll 을 하는 것이다.
+    - test 메소드에 @Transactional 이 걸려있으면, 같은 영속성 컨텍스트에서 처리되기에 save 한 멤버가 조회가 된다.
+    - test 메소드에 @Transactional 이 안걸려있으면, 같은 영속성 컨텍스트가 아니기에 save 한 멤버가 조회가 안된다.
+- 결론을 얘기하면 Spring 에서 여러 EntityManager 가 같은 트랜잭션일 경우 같은 영속성 컨텍스트에 접근한다.  
+
+```java
+    // MemberService.java
+    public List<Member> test() {
+        List<Member> members = memberRepository2.findAll();
+        members.forEach(member -> {
+            log.info("before member : {}, order.size : {}", member, member.getOrders().size());
+        });
+
+        Long id = saveMember(Member.builder().name("test").build());
+
+        members = memberRepository2.findAll();
+        members.forEach(member -> {
+            log.info("after member : {}, order.size : {}", member, member.getOrders().size());
+        });
+
+        return members;
+    }   
+
+    // MemberRepository2.java
+    private final EntityManager em;
+
+    public void save(Member member) {
+        em.persist(member);
+    }
+
+    public Member findOne(Long id) {
+        return em.find(Member.class, id);
+    }
+
+    public List<Member> findAll() {
+        return em.createQuery("select m from Member m", Member.class)
+                .getResultList();
+    }
+
+```
+
 ## Spring 환경 에서 EntityManager 는 Thread-Safe 한가?
 - 아래 블로그 내용 결론만 정리하면 Spring 에서는 EntityManager 를 Proxy 를 통해 감싸며, EntityManager 메소드를 호출할 때마다 Proxy 를 통해 EntityManager 를 생성한다. 즉, Thread-Safe 하다.
 
